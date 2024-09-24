@@ -16,6 +16,17 @@ type Props = PropsWithChildren<{
   headerBackgroundColor: { dark: string; light: string };
 }>;
 
+/**
+ * A component that renders a parallax scroll view with a header image.
+ *
+ * The header image is scaled and translated based on the scroll position.
+ * The background color of the header is determined by the color scheme.
+ *
+ * @param children The children elements to render inside the scroll view.
+ * @param headerImage The image to render at the top of the scroll view.
+ * @param headerBackgroundColor The background color of the header, specified as an object with light and dark colors.
+ * @returns A ParallaxScrollView component.
+ */
 export default function ParallaxScrollView({
   children,
   headerImage,
