@@ -16,6 +16,7 @@ import {
   View,
 } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
+import { useCustomer } from '../../context/CustomerProvider';
 import { useSession } from '../../context/SessionProvider';
 //ここでdetails画面にデータのIDを渡して飛ばす
 function handlePress(customer) {
@@ -93,7 +94,7 @@ export default function Index() {
   const { signOut } = useSession();
 
   const [data, setData] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  //const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1); // ページ番号
   const [isLoading, setIsLoading] = useState(true); // データ取得中かどうか
   const [hasMore, setHasMore] = useState(true); // まだデータがあるかどうか
@@ -105,28 +106,8 @@ export default function Index() {
   const [params, setParams] = useState({});
   const isFocused = useIsFocused();
   const router = useRouter();
-  //const navigation = useNavigation();
 
-  //   CustomerProviderからデータを取得
-  //   const { fetchData, searchText, page, errors } = useCustomer();
-
-  //検索時文字入力の0.5秒後に実行
-  //   const debounceApiCall = useCallback(
-  //     _.debounce(value => {
-  //       searchText(value);
-  //     }, 500),
-  //     []
-  //   );
-
-  //   useEffect(() => {
-  //     const unsubscribe = navigation.addListener('focus', () => {
-  // データが更新されたときに処理を実行
-  //       if (navigation.getParams()?.refresh) {
-  //         fetchData(navigation.getParams().selectedId);
-  //       }
-  //     });
-  //     return unsubscribe;
-  //   }, [navigation]);
+  const { setSearchText, searchText } = useCustomer();
 
   useEffect(() => {
     if (router.params?.refresh && router.params?.selectedId) {
@@ -135,24 +116,38 @@ export default function Index() {
     }
   }, [router.params?.refresh, router.params?.selectedId]);
 
-  //   useEffect(() => {
-  //     debounceApiCall(searchText);
-  //     fetchData(searchText, page);
-  //   }, [searchText]);
-
-  const searchData = async () => {
-    //signOut();
-    // searchData(searchText, page);
-    //console.log('fetchData', fetchData);
+  //検索メソッド;
+  const searchData = async (searchText, page) => {
+    fetchData(searchText, page), [searchText, page];
+    console.log('fetchData', fetchData);
   };
 
+  //   function searchWord() {
+  //     setSearchText(searchText);
+  //   }
+  //検索結果を表示;
+  useEffect(
+    (searchText, page) => {
+      searchData();
+      console.log('sasa', searchText);
+    },
+    [searchText, page]
+  );
+
+  //検索ボックスをクリア
+  const SearchReset = () => {
+    setSearchText('');
+    fetchData('', 1);
+  };
+
+  //初期表示メソッド
   const fetchData = async (keyword = '', page = 1) => {
     console.log('fetchData', keyword, page);
 
     try {
       const user = await SecureStore.getItemAsync('user');
       const { token } = JSON.parse(user);
-      console.log(token, 'ggggg');
+      //console.log(token, 'ggggg');
       const response = await axios.get(
         'https://account-book.test/api/customers',
         {
@@ -179,13 +174,13 @@ export default function Index() {
         setData(prevData => [...prevData, ...customers]);
       }
 
-      // 次のページがあればtrue、なければfalse
-      //   if (response.data.links.next) {
-      //     setHasMore(true);
-      //   } else {
-      //     setHasMore(false);
-      //   }
-
+      //ページネーション
+      //次のページがあればtrue、なければfalse
+      if (response.data.links.next) {
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
       setHasMore(response.data.links.next ? true : false);
       setTotalPages(response.data.meta.last_page);
 
@@ -233,11 +228,11 @@ export default function Index() {
     fetchData('', 1);
   };
 
-  useEffect(() => {
-    if (isFocused) {
-      const testee = fetchData('', 1); // 初回データを取得
-    }
-  }, [isFocused]);
+  //   useEffect(() => {
+  //     if (isFocused) {
+  //       const testee = fetchData('', 1); // 初回データを取得
+  //     }
+  //   }, [isFocused]);
 
   useEffect(() => {
     if (router.params?.selectedId) {
@@ -250,17 +245,6 @@ export default function Index() {
     }
     [router.params?.selectedId];
   });
-
-  //検索結果を表示;
-  useEffect(() => {
-    searchData(searchText, page);
-  }, [searchText, page]);
-
-  //検索ボックスをクリア
-  const SearchReset = () => {
-    setSearchText('');
-    fetchData('', 1);
-  };
 
   useFocusEffect(
     useCallback(() => {

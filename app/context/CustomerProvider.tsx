@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import {
   createContext,
@@ -11,15 +10,11 @@ import {
 import { useStorageState } from './useStorageState';
 
 const CustomerContext = createContext<{
-  fetchData: () => void;
   searchText: string | null;
-  page: string | null;
-  errors: string | null;
+  setSearchText: (text: string) => void;
 }>({
-  fetchData: () => {},
-  searchText: null,
-  page: null,
-  errors: null,
+  searchText: '',
+  setSearchText: () => {},
 });
 
 export function useCustomer() {
@@ -43,33 +38,39 @@ export function CustomerProvider({ children }: PropsWithChildren) {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const flatListRef = useRef(null); // FlatListのrefを定義
+  const [searchData, setSearchData] = useStorageState('search');
+  const [isFocused, setIsFocused] = useState(false);
+  const [searchText, setSearchText] = useStorageState('search');
 
   return (
     <CustomerContext.Provider
       value={{
-        fetchData: (searchText: string, page: 1, session: string) => {
-          //const response = axios.get(
-          axios
-            .get('https://account-book.test/api/customers', {
-              params: {
-                search: searchText,
-                page: page,
-              },
-              headers: {
-                Authorization: `Bearer ${session}`,
-              },
-            })
-            .then(async response => {
-              try {
-                const customers = response.data.data.customers;
-              } catch (error) {
-                setIsLoading(false);
-                setErrors(errors);
-              } finally {
-                setIsLoading(false);
-              }
-            });
-        },
+        //初期画面用  別になくてもよい
+        //     fetchData: (searchText: string, page: 1, session: string) => {
+        //       //const response = axios.get(
+        //       axios
+        //         .get('https://account-book.test/api/customers', {
+        //           params: {
+        //             search: searchText,
+        //             page: page,
+        //           },
+        //           headers: {
+        //             Authorization: `Bearer ${session}`,
+        //           },
+        //         })
+        //         .then(async response => {
+        //           try {
+        //             const customers = response.data.data.customers;
+        //           } catch (error) {
+        //             setIsLoading(false);
+        //             setErrors(errors);
+        //           } finally {
+        //             setIsLoading(false);
+        //           }
+        //         });
+        //     },
+        searchText,
+        setSearchText,
       }}
     >
       {children}

@@ -46,11 +46,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     <AuthContext.Provider
       value={{
         signIn: (email: string, password: string) => {
-          //   if (session) {
-          //     console.log('既存のセッションが存在します:', session);
-          //     router.push('/(tabs)/regist');
-          //     return;
-          //   }
           axios
             .post('https://account-book.test/api/sanctum/token', {
               email,
@@ -62,21 +57,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 const user = {
                   token: response.data.token,
                 };
-                //console.log('user', JSON.stringify(user));
-                // await SecureStore.setItemAsync('user', JSON.stringify(user));
-                //setSession(JSON.stringify(user));
 
                 console.log(user.token);
-                // const userData = await SecureStore.getItemAsync('user');
-                //const { token, password } = JSON.parse(user);s
 
                 setSession(JSON.stringify(user));
-                //router.replace('./(tabs)/(customer)/index');
               } catch (error) {
                 console.log(error);
               }
               if (response.data) {
-                //setErrors('');
               }
             })
             .catch(error => {
