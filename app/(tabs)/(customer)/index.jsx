@@ -107,7 +107,7 @@ export default function Index() {
   const isFocused = useIsFocused();
   const router = useRouter();
 
-  const { setSearchText, searchText } = useCustomer();
+  const { setText, searchText } = useCustomer();
 
   useEffect(() => {
     if (router.params?.refresh && router.params?.selectedId) {
@@ -118,26 +118,34 @@ export default function Index() {
 
   //検索メソッド;
   const searchData = async (searchText, page) => {
-    fetchData(searchText, page), [searchText, page];
-    console.log('fetchData', fetchData);
+    try {
+      await fetchData(searchText, page), [searchText, page];
+      console.log('searchText', searchText);
+      console.log('page', page);
+      console.log('fetchData', fetchData);
+    } catch (error) {
+      console.error('エラー', error);
+    }
   };
 
   //   function searchWord() {
   //     setSearchText(searchText);
   //   }
   //検索結果を表示;
-  useEffect(
-    (searchText, page) => {
-      searchData();
-      console.log('sasa', searchText);
-    },
-    [searchText, page]
-  );
+  useEffect(() => {
+    searchData(searchText, page);
+    console.log('sasa', searchText);
+  }, [searchText, page]);
+
+  useEffect(() => {
+    fetchData(); // 初回データ取得
+  }, []);
 
   //検索ボックスをクリア
   const SearchReset = () => {
-    setSearchText('');
-    fetchData('', 1);
+    //console.log('てええすと', searchText);
+    setText('');
+    //fetchData('', 1);
   };
 
   //初期表示メソッド
@@ -305,9 +313,9 @@ export default function Index() {
           autoCapitalize="none"
           placeholder="取引先名で検索"
           value={searchText}
-          onChangeText={text => setSearchText(text)}
+          onChangeText={text => setText(text)}
         />
-
+        {error && <Text style={{ color: 'red' }}>{error}</Text>}
         <Pressable onPress={SearchReset}>
           <Text style={{ fontSize: 20, color: 'blue' }}>リセット</Text>
         </Pressable>

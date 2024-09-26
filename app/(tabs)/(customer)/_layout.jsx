@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import React from 'react';
+import { CustomerProvider } from '../../context/CustomerProvider';
 // import { AppProvider } from './context/AppContext';
 // import { ExpoRoot } from 'expo-router';
 
@@ -12,9 +13,11 @@ import React from 'react';
 // }
 export default function CustomerLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="details" />
-    </Stack>
+    <CustomerProvider>
+      <Stack>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="details" />
+      </Stack>
+    </CustomerProvider>
   );
 }
