@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useState } from 'react';
 import { Alert, Button, Text, TextInput, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import { useCustomer } from '../../context/CustomerProvider';
 
 export default function Details() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function Details() {
   const [representative_name, setRepresentativeName] = useState('');
   const [print_representative_name, setRepresentativeCheck] = useState(false);
   const [errors, setErrors] = useState('');
+  const [refreshFlg] = useCustomer(false);
 
   const handleSave = async () => {
     // 入力データをAPIに送信

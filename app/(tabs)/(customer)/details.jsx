@@ -6,6 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { Alert, Button, Text, TextInput, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import { useCustomer } from '../../context/CustomerProvider';
 
 export default function Details() {
   const router = useRouter();
@@ -19,8 +20,10 @@ export default function Details() {
   const [print_department_name, setDepartmentCheck] = useState(false);
   const [representative_name, setRepresentativeName] = useState('');
   const [print_representative_name, setRepresentativeCheck] = useState(false);
+  //const [flg] = useState('');
   const [errors, setErrors] = useState('');
-  const [refreshFlg, setRefreshFlg] = useState(false);
+  const { Flg, setFlg } = useCustomer(false);
+  const { pageId, setPageId } = useCustomer(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -54,6 +57,7 @@ export default function Details() {
         console.error(error);
       }
     };
+
     fetchData();
   }, [params.id]);
 
@@ -81,10 +85,9 @@ export default function Details() {
           },
         }
       );
-
-      //   navigation.setParams({
-      //     refresh: true,
-      //   });
+      //const { setRefreshFlg } = useCustomer();
+      setFlg(true);
+      setId(params.id);
 
       Alert.alert('更新しました');
 

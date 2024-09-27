@@ -1,9 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome'; //アイコン表示用インポート
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
@@ -21,14 +17,10 @@ import {
 } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 import { useCustomer } from '../../context/CustomerProvider';
-import { useSession } from '../../context/SessionProvider';
 
 export default function Index() {
-  const { signOut } = useSession();
-  const navigation = useNavigation();
   const [data, setData] = useState([]);
-  //const [searchText, setSearchText] = useState('');
-  const [page, setPage] = useState(1); // ページ番号
+  //const [page, setPage] = useState(1); // ページ番号
   const [isLoading, setIsLoading] = useState(true); // データ取得中かどうか
   const [hasMore, setHasMore] = useState(true); // まだデータがあるかどうか
   const [refreshing, setRefreshing] = useState(false);
@@ -36,16 +28,23 @@ export default function Index() {
   const flatListRef = useRef(null); // FlatListのrefを定義
   const [isFetching, setIsFetching] = useState(false); // データをロード中かどうか
   const [totalPages, setTotalPages] = useState(1); // 総ページ数
-  const [params, setParams] = useState({});
   const isFocused = useIsFocused();
   const router = useRouter();
-  const id = useState('');
+
+  const { searchText, setSearchText } = useCustomer('searchText');
+  const { page, setPage } = useCustomer('page');
+  const { flg, setFlg } = useCustomer('flg');
+  const { scrollId, setScrollId } = useCustomer('id');
+  const { id, setId } = useCustomer('id');
 
   //ここでdetails画面にデータのIDを渡して飛ばす
   function handlePress(customer) {
+    console.log('一覧確認', flg, id, page, scrollId);
+
     //ここで遷移前にIDを保存
-    console.log('テスト', customer.id);
+    console.log('テスト', customer.id, 'ページ', page);
     setId(customer.id);
+    setPage(page);
     router.push({
       pathname: '/(tabs)/(customer)/details/',
       params: { id: customer.id },
@@ -117,33 +116,10 @@ export default function Index() {
     );
   }
 
-  const {
-    setText,
-    searchText,
-    setSearchText,
-    setPageId,
-    pageId,
-    scrollIdsetId,
-    setScrollId,
-    scrollId,
-    setId,
-  } = useCustomer();
-
-  //   useEffect(() => {
-  //     if (navigation.params?.refresh) {
-  //       console.log('更新処理？');
-  //       // 画面に戻ってきたときにデータを更新
-  //       fetchData(scrollId, page);
-  //     }
-  //   }, [navigation.params?.refresh]);
-
   //検索メソッド;
   const searchData = async (searchText, page) => {
     try {
       await fetchData(searchText, page), [searchText, page];
-      //   console.log('searchText', searchText);
-      //   console.log('page', page);
-      //   console.log('fetchData', fetchData);
     } catch (error) {
       console.error('エラー', error);
     }
@@ -162,6 +138,8 @@ export default function Index() {
     //空文字に置き換え未入力に戻す
     setText('');
   };
+
+  //初期表示メソッド
 
   //初期表示メソッド
 
@@ -207,22 +185,25 @@ export default function Index() {
       setHasMore(response.data.links.next ? true : false);
       setTotalPages(response.data.meta.last_page);
 
-      const selectedId = router.params?.selectedId;
-      // **ここからが追記部分**
-      if (selectedId) {
-        // 目的のIDが現在のページのデータに含まれているかチェック
-        const index = customers.findIndex(item => item.id === selectedId);
-        if (index !== -1) {
-          // 目的のIDが見つかったらその位置にスクロール
-          flatListRef.current.scrollToIndex({
-            animated: true,
-            index: data.length - customers.length + index, // グローバルなインデックス
-          });
-        } else if (hasMore) {
-          // 次のページが存在する場合は次のページをロード
-          fetchData(keyword, page + 1);
-        }
-      }
+      //呼び出された際に返却する値
+      return customers;
+
+      //   const selectedId = router.params?.selectedId;
+      //   // **ここからが追記部分**
+      //   if (selectedId) {
+      //     // 目的のIDが現在のページのデータに含まれているかチェック
+      //     const index = customers.findIndex(item => item.id === selectedId);
+      //     if (index !== -1) {
+      //       // 目的のIDが見つかったらその位置にスクロール
+      //       flatListRef.current.scrollToIndex({
+      //         animated: true,
+      //         index: data.length - customers.length + index, // グローバルなインデックス
+      //       });
+      //     } else if (hasMore) {
+      //       // 次のページが存在する場合は次のページをロード
+      //       fetchData(keyword, page + 1);
+      //     }
+      //   }
     } catch (error) {
       setIsLoading(false);
       console.log('データの取得に失敗しました。', error);
@@ -257,54 +238,47 @@ export default function Index() {
     setId('');
   };
 
-  //初回データ取得、
-  //   useEffect(() => {
-  //     if (isFocused) {
-  //       const testee = fetchData('', 1); // 初回データを取得
-  //     }
-  //   }, []);
-
-  if (scrollId) {
-    const index = data.findIndex(item => item.id === scrollId);
-    if (index !== -1) {
-      flatListRef.current?.scrollToIndex({ animated: true, index });
-    }
-  }
-  [scrollId];
-
   //目的のIDのデータがあるページを取得し、そのページまでスクロールする
   useFocusEffect(
     useCallback(() => {
-      //const params = router.params; //渡されたやつが入ってほしい
-      //   console.log('router.params', params);
       const loadPageAndScroll = async () => {
-        if (router.params?.refresh && id) {
-          let page = 1;
-          let found = false;
-
-          while (!found && page <= totalPages) {
-            setIsFetching(true);
-            const response = await fetchData('', page); // fetchDataで指定ページのデータを取得
-
-            // 現在のページデータにselectedIdが含まれているかチェック
-            const index = response.data.findIndex(item => item.id === id);
-            if (scrollId !== -1) {
-              // 目的のIDが見つかったページにスクロール
-              if (flatListRef.current) {
-                flatListRef.current.scrollToIndex({ animated: true, scrollId });
+        if (flg && id) {
+          let checkPage = 1; //ページ初期値
+          //let found = false;//目的のIDが見つかったか確認
+          setIsFetching(true);
+          try {
+            while (checkPage <= page) {
+              const response = await fetchData('', checkPage); // fetchDataで指定ページのデータを取得
+              //console.log('確認用1', response);
+              if (!response || response.length === 0 || checkPage == page) {
+                console.warn('データが取得できませんでした。');
+                break; // データがなければループを抜ける
               }
-              found = true;
-            } else {
-              page++; // 次のページをロード
+              const customers = response;
+              console.log('確認用2'); //, customers);
+              if (!customers || customers.length === 0) {
+                console.warn('顧客データが取得できませんでした。');
+                break; // データがなければループを抜ける
+              }
+
+              const index = customers.findIndex(item => item.id === id);
+              if (index !== -1) {
+                // 目的のIDが見つかったページにスクロール
+                flatListRef.current.scrollToIndex({ animated: true, index });
+                break;
+              }
+              checkPage++; // 次のページをロード
             }
-            console.log('一覧画面に戻る');
-            setIsFetching(false);
+          } catch (error) {
+            console.error('データ取得中にエラーが発生しました:', error);
+          } finally {
+            setIsFetching(false); // 例外が発生しても必ず終了処理を実行
           }
         }
       };
 
       loadPageAndScroll();
-    }, [router.params?.refresh, id, totalPages])
+    }, [flg, id, page])
   );
 
   return (
