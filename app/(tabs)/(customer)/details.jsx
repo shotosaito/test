@@ -20,6 +20,7 @@ export default function Details() {
   const [representative_name, setRepresentativeName] = useState('');
   const [print_representative_name, setRepresentativeCheck] = useState(false);
   const [errors, setErrors] = useState('');
+  const [refreshFlg, setRefreshFlg] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -80,20 +81,14 @@ export default function Details() {
           },
         }
       );
-      Alert.alert('更新しました');
-      //console.log(response.data);
-
-      console.log('渡すやつ', params.id);
 
       //   navigation.setParams({
       //     refresh: true,
-      //     selectedId: params.id,
       //   });
 
-      //   router.back({
-      //     //pathname: '/(tabs)/(customer)/index', // 戻る画面のパス
-      //     //params: { refresh: true, selectedId: params.id }, // パラメータを渡す
-      //   }); //更新後一覧に戻る
+      Alert.alert('更新しました');
+
+      console.log('渡すやつ', params.id);
 
       if (response.data) {
         setErrors('');
