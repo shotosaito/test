@@ -27,24 +27,66 @@ export default function Index() {
   const [error, setError] = useState(''); // エラーメッセージ用
   const flatListRef = useRef(null); // FlatListのrefを定義
   const [isFetching, setIsFetching] = useState(false); // データをロード中かどうか
-  const [totalPages, setTotalPages] = useState(1); // 総ページ数
+  //const [totalPages, setTotalPages] = useState(1); // 総ページ数
+  const [checkPage, setCheckPage] = useState(1);
   const isFocused = useIsFocused();
   const router = useRouter();
 
-  const { searchText, setSearchText } = useCustomer('searchText');
-  const { page, setPage } = useCustomer('page');
-  const { flg, setFlg } = useCustomer('flg');
-  const { scrollId, setScrollId } = useCustomer('id');
-  const { id, setId } = useCustomer('id');
+  const {
+    searchText,
+    text,
+    setSearchText,
+    setText,
+    id,
+    pageId,
+    setId,
+    scrollId,
+    setScrollId,
+    flg,
+    setFlg,
+    page,
+    setPageId,
+    refreshFlg,
+    setPage,
+  } = useCustomer();
+
+  //   console.log(
+  //     'テスト一覧:',
+  //     searchText,
+  //     '/',
+  //     scrollId,
+  //     '/',
+  //     pageId,
+  //     '/',
+  //     refreshFlg
+  //   );
+
+  //id,    page, flg,   text,
+
+  //   const { page, setPage } = useCustomer();
+  //   const { flg, setFlg } = useCustomer();
+  //   const { scrollId, setScrollId } = useCustomer();
+  //   const { id, setId } = useCustomer('');
+
+  //   const {
+  //     searchText,
+  //     setSearchText,
+  //     page,
+  //     setPage,
+  //     flg,
+  //     setFlg,
+  //     scrollId,
+  //     setScrollId,
+  //     id,
+  //     setId,
+  //   } = useCustomer();
 
   //ここでdetails画面にデータのIDを渡して飛ばす
   function handlePress(customer) {
-    console.log('一覧確認', flg, id, page, scrollId);
-
     //ここで遷移前にIDを保存
-    console.log('テスト', customer.id, 'ページ', page);
-    setId(customer.id);
-    setPage(page);
+    console.log('テスト', scrollId, 'ページ', pageId);
+    setId(customer.id.toString());
+    //setPage(response.data.meta.from);
     router.push({
       pathname: '/(tabs)/(customer)/details/',
       params: { id: customer.id },
@@ -117,9 +159,10 @@ export default function Index() {
   }
 
   //検索メソッド;
-  const searchData = async (searchText, page) => {
+  const searchData = async (searchText, pageId) => {
+    // console.log('検索テスト', searchText, pageId);
     try {
-      await fetchData(searchText, page), [searchText, page];
+      await fetchData(searchText, pageId);
     } catch (error) {
       console.error('エラー', error);
     }
@@ -128,10 +171,14 @@ export default function Index() {
   //検索結果を表示;
 
   useEffect(() => {
+    // fetchData('', 1);
+  }, []);
+
+  useEffect(() => {
     setTimeout(() => {
-      searchData(searchText, page);
+      searchData(searchText, pageId);
     }, 500);
-  }, [searchText, page]);
+  }, [searchText, pageId]);
 
   //検索ボックスをクリア
   const SearchReset = () => {
@@ -144,7 +191,11 @@ export default function Index() {
   //初期表示メソッド
 
   //useFocusEffect(() => {
-  const fetchData = async (keyword = '', page = '') => {
+  const fetchData = async (keyword = '', pageId = '') => {
+    console.log(';aslkdfj;alskdfj;kas called', pageId);
+    if (pageId == null) {
+      return;
+    }
     try {
       const user = await SecureStore.getItemAsync('user');
       const { token } = JSON.parse(user);
@@ -154,7 +205,7 @@ export default function Index() {
         {
           params: {
             search: keyword,
-            page: page,
+            page: parseInt(pageId) ?? 1,
           },
           headers: {
             Authorization: `Bearer ${token}`,
@@ -164,9 +215,14 @@ export default function Index() {
 
       setIsLoading(false);
 
-      const customers = response.data.data.customers;
+      //   console.log('確認用：', response.data.meta.current_page);
 
-      if (page === 1) {
+      //console.log(response.data.meta.from);
+
+      const customers = response.data.data.customers;
+      setPage(response.data.meta.current_page?.toString());
+
+      if (pageId === 1) {
         //ページが1の場合最初に表示するデータを取得
         setData(customers);
         setRefreshing(false);
@@ -177,36 +233,20 @@ export default function Index() {
 
       //ページネーション
       //次のページがあればtrue、なければfalse
-      if (response.data.links.next) {
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-      }
+      //   if (response.data.links.next) {
+      //     setHasMore(true);
+      //   } else {
+      //     setHasMore(false);
+      //   }
       setHasMore(response.data.links.next ? true : false);
-      setTotalPages(response.data.meta.last_page);
+      //setTotalPages(response.data.meta.last_page);
 
       //呼び出された際に返却する値
-      return customers;
 
-      //   const selectedId = router.params?.selectedId;
-      //   // **ここからが追記部分**
-      //   if (selectedId) {
-      //     // 目的のIDが現在のページのデータに含まれているかチェック
-      //     const index = customers.findIndex(item => item.id === selectedId);
-      //     if (index !== -1) {
-      //       // 目的のIDが見つかったらその位置にスクロール
-      //       flatListRef.current.scrollToIndex({
-      //         animated: true,
-      //         index: data.length - customers.length + index, // グローバルなインデックス
-      //       });
-      //     } else if (hasMore) {
-      //       // 次のページが存在する場合は次のページをロード
-      //       fetchData(keyword, page + 1);
-      //     }
-      //   }
+      return customers;
     } catch (error) {
       setIsLoading(false);
-      console.log('データの取得に失敗しました。', error);
+      //   console.log('データの取得に失敗しました。', error);
       setError('データの取得に失敗しました。');
     } finally {
       setIsLoading(false); // データ取得終了
@@ -220,11 +260,11 @@ export default function Index() {
   // リストをスクロールしたら次のページを取得する
   //(次のページがある場合に限る・データ取得中の場合は何もしない)
   const loadMoreData = () => {
-    //console.log('loadMoreData', hasMore, isLoading);
+    console.log('loadMoreData', hasMore, isLoading);
     if (hasMore && !isLoading) {
-      //   signOut();
-      //console.log('called');
-      setPage(prevPage => prevPage + 1);
+      //   console.log('called');
+      setPage((parseInt(pageId) + 1)?.toString());
+      //   console.log('ページ追加', pageId);
     }
   };
 
@@ -233,52 +273,106 @@ export default function Index() {
     //console.log('wewewewe');
     setIsLoading(true);
     setRefreshing(true);
-    setPage(1);
     fetchData('', 1);
     setId('');
+    setFlg('false');
   };
+
+  //   const loadPageAndScroll = async () => {
+  //     if (refreshFlg) {
+  //       console.log(8998679879798);
+  //       //let found = false;//目的のIDが見つかったか確認
+  //       //   setIsFetching(true);
+  //       console.log('asfasdfdsaf', pageId);
+  //       console.log(checkPage, pageId);
+  //       setFlg(false);
+
+  //       try {
+  //         while (checkPage <= pageId) {
+  //           console.log('jask;dfja;skldjf;aklsjdf;laskdjf', checkPage);
+  //           const customers = await fetchData('', checkPage); // fetchDataで指定ページのデータを取得
+  //           //console.log('確認用1', customers);
+  //           if (!customers || customers.length === 0) {
+  //             console.warn('データが取得できませんでした。');
+  //             break; // データがなければループを抜ける
+  //           }
+
+  //           console.log('確認用2', customers); //, customers);
+  //           if (!customers || customers.length === 0) {
+  //             console.warn('顧客データが取得できませんでした。');
+  //             break; // データがなければループを抜ける
+  //           }
+
+  //           setCheckPage(checkPage + 1);
+  //           setPage(pageId - 1); // 次のページをロード
+
+  //           if (pageId <= 0) {
+  //             break;
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error('データ取得中にエラーが発生しました:', error);
+  //       } finally {
+  //         setIsFetching(false); // 例外が発生しても必ず終了処理を実行
+  //         setFlg(false);
+
+  //         // const index = customers.findIndex(item => item.id === scrollId);
+  //         // console.log('========asdfasdfadsf===========');
+  //         // console.log(index, scrollId);
+  //         // if (index !== -1) {
+  //         //   // 目的のIDが見つかったペ
+  //         //   setFlg(false);
+  //         //   // ージにスクロール;
+  //         //   flatListRef.current.scrollToIndex({ animated: true, index });
+  //         // }
+  //       }
+  //     }
+  //   };
 
   //目的のIDのデータがあるページを取得し、そのページまでスクロールする
   useFocusEffect(
     useCallback(() => {
-      const loadPageAndScroll = async () => {
-        if (flg && id) {
-          let checkPage = 1; //ページ初期値
-          //let found = false;//目的のIDが見つかったか確認
-          setIsFetching(true);
-          try {
-            while (checkPage <= page) {
-              const response = await fetchData('', checkPage); // fetchDataで指定ページのデータを取得
-              //console.log('確認用1', response);
-              if (!response || response.length === 0 || checkPage == page) {
-                console.warn('データが取得できませんでした。');
-                break; // データがなければループを抜ける
-              }
-              const customers = response;
-              console.log('確認用2'); //, customers);
-              if (!customers || customers.length === 0) {
-                console.warn('顧客データが取得できませんでした。');
-                break; // データがなければループを抜ける
-              }
+      console.log('↓===================');
+      console.log('scrollId', scrollId);
+      console.log('pageId', pageId);
+      //   console.log('checkPage', checkPage);
+      console.log('refreshFlg', refreshFlg);
+      //   console.log('scrollId', scrollId);
+      //   console.log('pageId', pageId);
+      //   console.log('checkPage', checkPage);
+      console.log('↑===================');
 
-              const index = customers.findIndex(item => item.id === id);
-              if (index !== -1) {
-                // 目的のIDが見つかったページにスクロール
-                flatListRef.current.scrollToIndex({ animated: true, index });
-                break;
-              }
-              checkPage++; // 次のページをロード
-            }
-          } catch (error) {
-            console.error('データ取得中にエラーが発生しました:', error);
-          } finally {
-            setIsFetching(false); // 例外が発生しても必ず終了処理を実行
-          }
-        }
+      const loadData = async () => {
+        const customers = await fetchData('', checkPage); // fetchDataで指定ページのデータを取得
+        // console.log(customers);
+        // if (!customers || customers.length === 0) {
+        //   console.warn('データが取得できませんでした。');
+        // }
       };
 
-      loadPageAndScroll();
-    }, [flg, id, page])
+      if (refreshFlg == 'true') {
+        setData([]);
+        try {
+          console.log('jask;dfja;skldjf;called', pageId);
+          while (checkPage <= parseInt(pageId) && pageId != null) {
+            console.log('jask;dfja;skldjf;aklsjdf;laskdjf', checkPage);
+            loadData();
+            setCheckPage(checkPage + 1);
+
+            // setPage((pageId - 1)?.toString()); // 次のページをロードss
+
+            console.log('checkPage', checkPage, 'pageId', pageId);
+            if (checkPage >= parseInt(pageId)) {
+              break;
+            }
+          }
+        } catch (error) {
+          console.error('データ取得中にエラーが発生しました:', error);
+        }
+      }
+
+      setFlg('false');
+    }, [refreshFlg])
   );
 
   return (
@@ -290,7 +384,7 @@ export default function Index() {
           autoCapitalize="none"
           placeholder="取引先名で検索"
           value={searchText}
-          onChangeText={text => setText(text)}
+          onChangeText={searchText => setText(searchText)}
         />
         {error && <Text style={{ color: 'red' }}>{error}</Text>}
         <Pressable onPress={SearchReset}>

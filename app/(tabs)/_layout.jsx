@@ -62,7 +62,7 @@ export default function TabLayout() {
 
       {/* <Tabs.Screen
         name="signup"
-        options={{
+        options={{s
           title: 'signup',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
@@ -77,6 +77,7 @@ export default function TabLayout() {
         name="(customer)"
         options={{
           title: 'customer',
+
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? 'code-slash' : 'code-slash-outline'}

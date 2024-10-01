@@ -23,7 +23,9 @@ export default function Details() {
   //const [flg] = useState('');
   const [errors, setErrors] = useState('');
   const { Flg, setFlg } = useCustomer(false);
-  const { pageId, setPageId } = useCustomer(null);
+  const { pageId, setPageId } = useCustomer(1);
+  const { id, setId } = useCustomer();
+  const { page, setPage } = useCustomer(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -86,12 +88,11 @@ export default function Details() {
         }
       );
       //const { setRefreshFlg } = useCustomer();
-      setFlg(true);
+      //   console.log('渡すやつ', params.id);
+      setFlg('true');
       setId(params.id);
 
       Alert.alert('更新しました');
-
-      console.log('渡すやつ', params.id);
 
       if (response.data) {
         setErrors('');

@@ -1,13 +1,16 @@
 import { createContext, useContext, type PropsWithChildren } from 'react';
+
 import { useStorageState } from './useStorageState';
 
 const CustomerContext = createContext<{
   searchText: string | null;
-  pageId: string | null;
+  //text: string | null;
+  pageId: string;
   scrollId: string | null;
-  id: string | null;
-  refreshFlg: boolean | false;
-  flg: boolean | false;
+  //id: string | null;
+  refreshFlg: boolean;
+  flg: boolean;
+  setSearchText: (text: string) => void;
   setText: (text: string) => void;
   setPage: (text: string) => void;
   setScrollId: (text: string) => void;
@@ -16,12 +19,14 @@ const CustomerContext = createContext<{
   setFlg: (text: boolean) => void;
 }>({
   searchText: null,
-  pageId: null,
+  //text: null,
+  pageId: '1',
   scrollId: null,
-  id: null,
-  refreshFlg: null,
-  flg: false,
+  //id: null,
+  refreshFlg: 'false',
+  flg: 'false',
 
+  setSearchText: () => {},
   setText: () => {},
   setPage: () => {},
   setScrollId: () => {},
@@ -42,46 +47,58 @@ export function useCustomer() {
   return value;
 }
 
-export function CustomerProvider({ children }: PropsWithChildren) {
-  const [searchText, setSearchText] = useStorageState('searchText');
-  const [scrollId, setScrollId] = useStorageState('id', null);
-  const [page, setPageID] = useStorageState('page', null);
-  const [refreshFlg, setRefreshFlg] = useStorageState('flg', null);
-  //const [searchText, setSearchText] = useState('');
-  //const [pageId, setPage] = useState('');
-  //const [scrollId, setScrollId] = useState('');
-
-  //const [id, setScrollId] = useState(null);
-  //const [page, setPage] = useState(null);
-  //const [flg, setFlg] = useState<boolean>(false);
-  //console.log('プロバイダー', scrollId, pageId);
+export function CustomerProvider({ children }: PropsWithChildren<{}>) {
+  const [[isSearchTextFlg, searchText], setSearchText] = useStorageState<
+    string | null
+  >('searchText');
+  //const [text, setText] = useStorageState<string | null>('text',null);
+  const [[isLoading, scrollId], setScrollId] = useStorageState<string | null>(
+    'scrollId'
+  );
+  const [[isPageIdFlg, pageId], setPageId] = useStorageState<string | '1'>(
+    'pageId'
+  );
+  //const [page, setPage] = useStorageState('page');
+  const [[isRefrechFlg, refreshFlg], setRefreshFlg] = useStorageState(
+    'refreshFlg',
+    'false'
+  );
 
   return (
     <CustomerContext.Provider
       value={{
-        // searchText,
-        page,
+        searchText,
+        //text,
+        pageId,
         scrollId,
         //id,
-        //flg
+        //flg,
         refreshFlg,
 
-        setText: (text: string) => {
-          setSearchText(text);
+        /*************  ✨ Codeium Command ⭐  *************/
+        /**
+         * Set the search word.
+         * @param {string} searchText search word.
+         */
+        /******  06e34c7a-7e96-4d3c-a616-ab3baac8c625  *******/ setText: (
+          searchText: string
+        ) => {
+          //   setSearchText(searchText);
+          //   console.log('検索ワード', searchText);
         },
-        setPage: (page: string) => {
-          setPageID(page);
-          console.log('page変更', page);
+        setPage: (pageId: string) => {
+          setPageId(pageId);
+          //   console.log('page変更', pageId);
         },
 
         setId: (id: string) => {
           setScrollId(id);
-          console.log('id変更', id);
+          //   console.log('id変更', id);
         },
 
-        setFlg: (flg: boolean) => {
+        setFlg: (flg: string) => {
           setRefreshFlg(flg);
-          console.log('flg変更', flg);
+          //   console.log('flg変更', flg);
         },
       }}
     >
