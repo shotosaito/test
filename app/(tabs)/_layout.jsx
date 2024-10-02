@@ -1,16 +1,19 @@
-import { Redirect, Tabs } from 'expo-router';
-import React from 'react';
-
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Redirect } from 'expo-router';
+import React from 'react';
 import { Text } from 'react-native';
+import { CustomerLayout } from '../(tabs)/(customer)/_layout';
+import { SettingsLayout } from '../(tabs)/(settings)/_layout';
 import { useSession } from '../context/SessionProvider';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   const { session, isLoading } = useSession();
+  const Tab = createBottomTabNavigator();
 
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -23,60 +26,19 @@ export default function TabLayout() {
   }
 
   return (
-    <Tabs
+    <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}
     >
-      {/* <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      /> */}
-      {/* <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      /> */}
-      {/* <Tabs.Screen
-        name="login"
-        options={{
-          title: 'login',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'code-slash' : 'code-slash-outline'}
-              color={color}
-            />
-          ),
-        }}
-      /> */}
-
-      {/* <Tabs.Screen
-        name="signup"
-        options={{s
-          title: 'signup',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'code-slash' : 'code-slash-outline'}
-              color={color}
-            />
-          ),
-        }}
-      /> */}
-
-      <Tabs.Screen
-        name="(customer)"
+      <Tab.Screen
+        name="customer"
+        component={CustomerLayout}
         options={{
           title: 'customer',
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          headerShown: false,
 
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
@@ -86,6 +48,18 @@ export default function TabLayout() {
           ),
         }}
       />
-    </Tabs>
+
+      <Tab.Screen
+        name="settings"
+        component={SettingsLayout}
+        options={{
+          title: 'settings',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'cog' : 'cog-outline'} color={color} />
+          ),
+        }}
+      />
+      {/* </Tabs> */}
+    </Tab.Navigator>
   );
 }

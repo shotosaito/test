@@ -28,6 +28,8 @@ export default function Details() {
   const { page, setPage } = useCustomer(null);
   const navigation = useNavigation();
 
+  navigation.setOptions({});
+
   useEffect(() => {
     // 初期表示時にAPIからデータを取得する
     const fetchData = async () => {

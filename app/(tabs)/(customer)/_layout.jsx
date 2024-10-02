@@ -17,7 +17,18 @@ export default function CustomerLayout() {
       <Stack>
         <Stack.Screen name="index" />
         <Stack.Screen name="details" />
+        <Stack.Screen name="regist" />
       </Stack>
     </CustomerProvider>
   );
 }
+
+// export function SettingsLayout() {
+//   return (
+//     <SessionProvider>
+//       <Stack>
+//         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+//       </Stack>
+//     </SessionProvider>
+//   );
+// }
