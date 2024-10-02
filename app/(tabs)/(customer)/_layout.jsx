@@ -22,13 +22,3 @@ export default function CustomerLayout() {
     </CustomerProvider>
   );
 }
-
-// export function SettingsLayout() {
-//   return (
-//     <SessionProvider>
-//       <Stack>
-//         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-//       </Stack>
-//     </SessionProvider>
-//   );
-// }
