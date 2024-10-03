@@ -37,7 +37,7 @@ export default function HomeScreen() {
   useEffect(() => {
     if (session) {
       console.log('既存のセッションが存在します:', session);
-      router.replace('/(tabs)/(customer)');
+      router.replace('/(tabs)/customers');
       return;
     }
   }, [session]);

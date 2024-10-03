@@ -36,11 +36,7 @@ export default function RootLayout() {
       <SessionProvider>
         <CustomerProvider>
           <Stack>
-            <Stack.Screen
-              name="(tabs)/_layout"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="+not-found" />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </CustomerProvider>
       </SessionProvider>

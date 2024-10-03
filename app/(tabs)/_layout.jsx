@@ -1,5 +1,4 @@
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
@@ -23,17 +22,13 @@ export default function TabLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}
-    >
+    <Tabs>
       <Tabs.Screen
-        name="(customer)"
+        name="customers"
         //component={CustomerLayout}
         options={{
           title: 'customer',
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? 'code-slash' : 'code-slash-outline'}
@@ -44,10 +39,11 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="(settings)"
-        //component={SettingsLayout}
+        name="settings"
+        //component={CustomerLayout}
         options={{
           title: 'settings',
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? 'code-slash' : 'code-slash-outline'}
