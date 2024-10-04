@@ -60,7 +60,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
                 console.log(user.token);
 
-                setSession(JSON.stringify(user));
+                setSession(JSON.stringify(user.token));
               } catch (error) {
                 console.log(error);
               }
