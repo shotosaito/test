@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import React from 'react';
-// import { SessionProvider } from '../../context/SessionProvider';
+//import { SessionProvider } from '../../context/SessionProvider';
 // import { AppProvider } from './context/AppContext';
 // import { ExpoRoot } from 'expo-router';
 
@@ -11,10 +11,10 @@ import React from 'react';
 // 		<ExpoRoot />
 // 	);
 // }
-export default function TaxLayout() {
+export default function InfpLayout() {
   return (
     <Stack>
-      <Stack.Screen name="tax" />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
     </Stack>
   );
 }

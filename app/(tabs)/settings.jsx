@@ -6,6 +6,13 @@ import { useSession } from '../context/SessionProvider';
 export default function Settings() {
   const { signOut } = useSession();
   const router = useRouter();
+
+  function InfoSetting() {
+    router.push({
+      pathname: '../../settings/info',
+    });
+  }
+
   function MailSetting() {
     router.push({
       pathname: '../../settings/mail',
@@ -35,6 +42,8 @@ export default function Settings() {
   return (
     <SafeAreaView>
       <View style={{ padding: 15, paddingBottom: 250 }}>
+        <Button title="自社情報の編集" onPress={InfoSetting} />
+
         <Button title="メール本文の設定" onPress={MailSetting} />
 
         <Button title="課税設定" onPress={TaxSetting} />

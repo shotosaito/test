@@ -19,6 +19,7 @@
     "app/(tabs)/explore.jsx",
     "app/(tabs)/customers.jsx",
     "app/(tabs)/_layout.jsx",
-    "app/context/SessionProvider.jsx"
+    "app/context/SessionProvider.jsx",
+    "app/settings/info/index.jsx"
   ]
 }
