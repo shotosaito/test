@@ -14,7 +14,7 @@ import React from 'react';
 export default function TaxLayout() {
   return (
     <Stack>
-      <Stack.Screen name="tax" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 }
