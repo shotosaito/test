@@ -1,6 +1,6 @@
 import CheckBox from '@react-native-community/checkbox';
 import axios from 'axios';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { Alert, Button, Text, TextInput, View } from 'react-native';
@@ -25,9 +25,11 @@ export default function Details() {
   const { pageId, setPageId } = useCustomer(1);
   const { id, setId } = useCustomer();
   const { page, setPage } = useCustomer(null);
-  //const navigation = useNavigation();
+  const navigation = useNavigation();
 
-  //navigation.setOptions({});
+  navigation.setOptions({
+    title: '顧客詳細',
+  });
 
   useEffect(() => {
     // 初期表示時にAPIからデータを取得する

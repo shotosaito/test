@@ -20,6 +20,7 @@
     "app/(tabs)/customers.jsx",
     "app/(tabs)/_layout.jsx",
     "app/context/SessionProvider.jsx",
-    "app/settings/info/index.jsx"
+    "app/settings/info/test.jsxx",
+    "app/settings/info/_layout.jsx"
   ]
 }

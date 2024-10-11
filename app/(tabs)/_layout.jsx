@@ -27,8 +27,16 @@ export default function TabLayout() {
         name="customers"
         //component={CustomerLayout}
         options={{
-          title: 'customer',
+          title: '取引先',
           headerShown: false,
+
+          // tabBarIcon: ({ color, focused }) => (
+          //   <TabBarIcon
+          //     name={focused ? 'code-slash' : 'code-slash-outline'}
+          //     color={color}
+          //   />
+          // ),
+
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? 'code-slash' : 'code-slash-outline'}
@@ -42,7 +50,7 @@ export default function TabLayout() {
         name="settings"
         //component={CustomerLayout}
         options={{
-          title: 'settings',
+          title: '会社情報',
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon

@@ -35,7 +35,7 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SessionProvider>
         <CustomerProvider>
-          <Stack>
+          <Stack screenOptions={{ headerBackTitle: '戻る' }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </CustomerProvider>

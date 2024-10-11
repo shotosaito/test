@@ -15,25 +15,6 @@ import { useStorageState } from '../../context/useStorageState';
 import { SettingsState } from '../../models/settingsModel';
 
 export default function Index() {
-  //   const [companyId, setCompanyId] = useState();
-  //   const [corporate_division, setCorporate_division] = useState(); //事業形態
-  //   const [name, setName] = useState(''); //会社名
-  //   const [closing_month, setClosing_month] = useState(''); //決算月
-  //   const [qualified_invoice_issuer_code, setQualified_invoice_issuer_code] =
-  // useState(''); //インボイス
-  //   const [department_name, setDepartment_name] = useState(''); //部署名
-  //   const [representative_name, setRepresentative_name] = useState(''); //担当者名
-  //   const [postal_code, setPostal_code] = useState(''); //郵便番号
-  //   const [address_street_1, setAddress_street_1] = useState(''); //住所
-  //   const [address_street_2, setAddress_street_2] = useState(''); //ビル名
-  //   const [email, setEmail] = useState(''); //メールアドレス
-  //   const [tel, setTel] = useState(''); //電話番号
-  //   const [mail_title_template, setMailTitle] = useState('');
-  //   const [mail_body_template, setMailBody] = useState('');
-  //   const [tax_consumption, setTaxConsumption] = useState('');
-  //   const [tax_rate, setTaxRate] = useState('');
-  //   const [tax_rounding, setTaxRounding] = useState('');
-  //   const [tax_withholding, setTaxWithholding] = useState('');
   const [inputs, setInputs] = useState(SettingsState);
   const [[isLoading, session], setSession] = useStorageState('session');
   const infoSession = JSON.parse(session);
@@ -54,34 +35,11 @@ export default function Index() {
           },
         })
         .then(response => {
-          console.log('自社', response.data);
+          //console.log('自社', response.data);
           setInputs({
             ...inputs,
             ...response.data.company,
           });
-
-          //   setCompanyId(response.data.company.id);
-          //   setCorporate_division(response.data.company.corporate_division); //事業形態
-          //   setName(response.data.company.name); //会社名
-          //   setQualified_invoice_issuer_code(
-          // response.data.company.qualified_invoice_issuer_code
-          //); //インボイス
-          //   setDepartment_name(response.data.company.department_name); //部署名
-          //   setRepresentative_name(response.data.company.representative_name); //担当者名
-          //   setPostal_code(response.data.company.postal_code); //郵便番号
-          //   setAddress_street_1(response.data.company.address_street_1); //住所
-          //   setAddress_street_2(response.data.company.address_street_2); //ビル名
-          //   setEmail(response.data.company.email); //メールアドレス
-          //   setTel(response.data.company.tel); //電話番号
-
-          //   setMailTitle(response.data.company.mail_title_template);
-          //   setMailBody(response.data.company.mail_body_template);
-          //   setTaxConsumption(response.data.company.tax_consumption);
-          //   setTaxRate(response.data.company.tax_rate);
-          //   setTaxRounding(response.data.company.tax_rounding);
-          //   setTaxWithholding(response.data.company.tax_withholding);
-
-          //console.log(companyId);
         })
         .catch(error => {
           setErrors(error.response.data.errors);
